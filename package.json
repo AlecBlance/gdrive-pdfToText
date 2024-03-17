@@ -1,0 +1,29 @@
+{
+  "name": "gdrive-pdftotext",
+  "version": "1.0.0",
+  "description": "Extract text from google drive pdf",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "dev": "nodemon index.ts",
+    "lint": "tsc"
+  },
+  "keywords": [
+    "google",
+    "drive",
+    "pdf",
+    "extract",
+    "download"
+  ],
+  "author": "Alec Blance",
+  "license": "MIT",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2"
+  }
+}
