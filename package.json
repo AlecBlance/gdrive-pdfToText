@@ -1,6 +1,6 @@
 {
   "name": "gdrive-pdftotext",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extract text from google drive pdf",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
