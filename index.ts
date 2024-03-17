@@ -9,7 +9,7 @@ const extractPageText = async (id: string, totalPages: number) => {
   const response = await Promise.all(promises).then((responses) =>
     Promise.all(responses.map((res) => res.text()))
   );
-  console.log(response.join().match(regexText)?.join(" "));
+  return response.join().match(regexText)?.join(" ");
 };
 
 const getTotalPages = async (url: string): Promise<number> => {
@@ -45,13 +45,11 @@ const extractInfo = async (
 
 const pdfToText = async (
   link = "https://drive.google.com/file/d/1DsNStoJlP9Q2MWi0ab0dSKkD22f6bzGU/view"
-): Promise<string> => {
+): Promise<string | undefined> => {
   const linkInfo = await extractInfo(link);
   const totalPages = await getTotalPages(linkInfo.url);
   const extractedText = await extractPageText(linkInfo.id, totalPages);
-  return "";
+  return extractedText;
 };
-
-pdfToText();
 
 export default { getTotalPages, pdfToText, extractPageText };
