@@ -1,9 +1,14 @@
+const fetch = require("fetch-retry")(global.fetch);
+
 const extractPageText = async (id: string, totalPages: number) => {
   const baseUrl = `https://drive.google.com/viewer2/prod-01/presspage?ck=drive&ds=${id}&authuser=0&page=`;
   const regexText = /(?<=,")([^"]+)(?="])/g;
   const promises = Array.from({ length: totalPages }, (_, i) => {
     const url = baseUrl + i;
-    return fetch(url);
+    return fetch(url, {
+      retries: 3,
+      retryDelay: 1000,
+    });
   });
 
   const response = await Promise.all(promises).then((responses) =>
