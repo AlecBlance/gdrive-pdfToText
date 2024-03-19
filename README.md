@@ -74,4 +74,4 @@ Well, of course! 😎 Feel free to contact me or do a PR. I'll review it and if 
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](LICENSE)
