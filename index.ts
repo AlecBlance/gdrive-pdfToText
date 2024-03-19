@@ -28,18 +28,14 @@ const extractInfo = async (
   link: string
 ): Promise<{ url: string; id: string }> => {
   const regexFullPageNumber =
-    /https:\/\/drive\.google\.com\/viewer2\/prod-01\/meta\?[^"]+/gi;
-  const regexFullPageNumber2 =
-    /https:\/\/drive\.google\.com\/viewer2\/prod-02\/meta\?[^"]+/gi;
+    /https:\/\/drive\.google\.com\/viewer2\/.*\/meta\?[^"]+/gi;
   const regexId = /(?<=ds=).*/gi;
 
   const response = await fetch(link);
   const text = await response.text();
-
-  const firstMatch =
-    text.match(regexFullPageNumber) ?? text.match(regexFullPageNumber2);
-
-  const url = decodeURIComponent(JSON.parse(`"${firstMatch![0]}"`));
+  const url = decodeURIComponent(
+    JSON.parse(`"${text.match(regexFullPageNumber)[0]}"`)
+  );
   const id = url.match(regexId)![0];
 
   return {
@@ -48,9 +44,7 @@ const extractInfo = async (
   };
 };
 
-const pdfToText = async (
-  link = "https://drive.google.com/file/d/1DsNStoJlP9Q2MWi0ab0dSKkD22f6bzGU/view"
-): Promise<string | undefined> => {
+const pdfToText = async (link: string): Promise<string | undefined> => {
   const linkInfo = await extractInfo(link);
   const totalPages = await getTotalPages(linkInfo.url);
   const extractedText = await extractPageText(linkInfo.id, totalPages);
