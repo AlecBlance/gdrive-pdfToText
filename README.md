@@ -2,6 +2,10 @@
 
 A node module to extract texts from a PDF in Google Drive. It doesn't require Google Drive API, and it extracts even if "Viewers can't download, print and copy".
 
+## ! NOTICE !
+
+This will be added in npm soon.
+
 ## Usage/Examples
 
 ```javascript
