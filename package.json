@@ -9,7 +9,8 @@
     "build": "tsup index.ts --format cjs,esm --dts",
     "dev": "nodemon index.ts",
     "dev-sample": "nodemon sample/index.ts",
-    "lint": "tsc"
+    "lint": "tsc",
+    "release": "npm run build && changeset publish"
   },
   "keywords": [
     "google",
