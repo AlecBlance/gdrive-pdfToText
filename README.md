@@ -2,11 +2,13 @@
 
 A node module to extract texts from a PDF in Google Drive. It doesn't require Google Drive API, and it extracts even if "Viewers can't download, print and copy".
 
-## ! NOTICE !
-
-This will be added in npm soon.
-
 ## Usage/Examples
+
+Install
+
+```bash
+npm i gdrive-pdfToText
+```
 
 ```javascript
 import gdrivePdf from "gdrive-pdfToText";
@@ -15,6 +17,7 @@ const test = async () => {
   const driveUrl =
     "https://drive.google.com/file/d/1pGOAwzneiFqjRYOLvrXaR10U6sffQSCn/view?usp=sharing";
   const text = await gdrivePdf.pdfToText(driveUrl);
+  //           await gdrivePdf.pdfToText(driveUrl, "password")
   console.log("🎃 Drive Url: ", driveUrl);
   console.log("🎉 Extracted Text:", text);
 };
