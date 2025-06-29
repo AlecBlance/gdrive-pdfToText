@@ -7,11 +7,11 @@ A node module to extract texts from a PDF in Google Drive. It doesn't require Go
 Install
 
 ```bash
-npm i gdrive-pdfToText
+npm i gdrive-pdftotext
 ```
 
 ```javascript
-import gdrivePdf from "gdrive-pdfToText";
+import gdrivePdf from "gdrive-pdftotext";
 
 const test = async () => {
   const driveUrl =
