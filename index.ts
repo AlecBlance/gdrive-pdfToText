@@ -33,11 +33,16 @@ const getTotalPages = async (url: string, pw?: string): Promise<number> => {
     const data = await response.text();
 
     const cleanedData = data.replace(`)]}'`, "");
-    return JSON.parse(cleanedData).pages;
+    const metaUrl = `https://drive.google.com/viewerng/${JSON.parse(cleanedData).meta}`;
+    const metaResponse = await fetch(metaUrl, {
+        method: "GET",
+    });
+    const metaCleanedData = (await metaResponse.text()).replace(`)]}'`, "");
+    return JSON.parse(metaCleanedData).pages;
 };
 
 const extractInfo = async (link: string): Promise<{ url: string; id: string }> => {
-    const regexFullPageNumber = /https:\/\/drive\.google\.com\/viewer2\/.*\/meta\?[^"]+/gi;
+    const regexFullPageNumber = /https:\/\/drive\.google\.com\/viewerng\/upload\?[^"]+/gi;
     const regexId = /(?<=ds=).*/gi;
     const response = await fetch(link);
     const text = await response.text();
