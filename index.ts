@@ -63,3 +63,4 @@ const pdfToText = async (link: string, pw?: string): Promise<string | undefined>
 };
 
 export default { getTotalPages, pdfToText, extractPageText };
+module.exports = { getTotalPages, pdfToText, extractPageText }; // CJS compatibility
