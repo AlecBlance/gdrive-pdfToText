@@ -1,66 +1,27 @@
-const fetch = require("fetch-retry")(global.fetch);
+import { extractDownloadedPdf } from "./src/pdf";
+import { extractInfo, extractPageText, getTotalPages } from "./src/viewer";
+import { DrivePdfError, ExtractionOptions, settings, validateDriveLink } from "./src/http";
 
-const extractPageText = async (id: string, totalPages: number, pw?: string) => {
-    const baseUrl = `https://drive.google.com/viewer2/prod-01/presspage?ck=drive&ds=${id}&authuser=0&page=`;
-    const regexText = /(?<=,")([^"]+)(?="])/g;
-    const promises = Array.from({ length: totalPages }, (_, i) => {
-        const url = baseUrl + i;
-        const formData = new URLSearchParams();
-        if (pw) {
-            formData.append("pw", pw);
-        }
-        return fetch(url, {
-            method: "POST",
-            body: pw ? formData : undefined,
-            retries: 5,
-            retryDelay: 15000,
-        });
-    });
+export { DrivePdfError, extractPageText, getTotalPages };
+export type { ExtractionOptions };
 
-    const response = await Promise.all(promises).then((responses) => Promise.all(responses.map((res) => res.text())));
-    return response.join().match(regexText)?.join(" ");
-};
-
-const getTotalPages = async (url: string, pw?: string): Promise<number> => {
-    const formData = new URLSearchParams();
-    if (pw) {
-        formData.append("pw", pw);
+/**
+ * Extract a publicly accessible Drive PDF. Only process files you are authorized
+ * to access. The undocumented viewer adapter is available as an explicit opt-in.
+ */
+export async function pdfToText(
+    link: string,
+    pw?: string,
+    options: ExtractionOptions = {},
+): Promise<string> {
+    const config = settings(options);
+    const url = validateDriveLink(link);
+    if (config.method === "download") {
+        return extractDownloadedPdf(url, pw, config);
     }
-    const response = await fetch(url, {
-        method: "POST",
-        body: pw ? formData : undefined,
-    });
-    const data = await response.text();
+    const info = await extractInfo(url.href, config);
+    const pages = await getTotalPages(info.url, pw, config);
+    return extractPageText(info.id, pages, pw, config);
+}
 
-    const cleanedData = data.replace(`)]}'`, "");
-    const metaUrl = `https://drive.google.com/viewerng/${JSON.parse(cleanedData).meta}`;
-    const metaResponse = await fetch(metaUrl, {
-        method: "GET",
-    });
-    const metaCleanedData = (await metaResponse.text()).replace(`)]}'`, "");
-    return JSON.parse(metaCleanedData).pages;
-};
-
-const extractInfo = async (link: string): Promise<{ url: string; id: string }> => {
-    const regexFullPageNumber = /https:\/\/drive\.google\.com\/viewerng\/upload\?[^"]+/gi;
-    const regexId = /(?<=ds=).*/gi;
-    const response = await fetch(link);
-    const text = await response.text();
-    const url = decodeURIComponent(JSON.parse(`"${text.match(regexFullPageNumber)[0]}"`));
-    const id = url.match(regexId)![0];
-
-    return {
-        url,
-        id,
-    };
-};
-
-const pdfToText = async (link: string, pw?: string): Promise<string | undefined> => {
-    const linkInfo = await extractInfo(link);
-    const totalPages = await getTotalPages(linkInfo.url, pw);
-    const extractedText = await extractPageText(linkInfo.id, totalPages, pw);
-    return extractedText;
-};
-
-export default { getTotalPages, pdfToText, extractPageText };
-module.exports = { getTotalPages, pdfToText, extractPageText }; // CJS compatibility
+export default { pdfToText, getTotalPages, extractPageText };
